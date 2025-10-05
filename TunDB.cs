@@ -1,4 +1,3 @@
-
 using System.Data.SQLite;
 using System.Data;
 
@@ -12,9 +11,9 @@ namespace TunaszUtils.DB
         /// </summary>
         /// <param name="table"></param>
         /// <param name="selectItems"></param>
-        /// <param name="whereItems">1st Name 2nd condition 3rd values</param>
+        /// <param name="conditions">1st Name 2nd condition 3rd values</param>
         /// <returns></returns>
-        public static List<List<object>> SelectFromTable(string db, string table, object[] selectItems, object[] whereItems)
+        public static List<List<object>> SelectFromTable(string db, string table, object[] selectItems, object[] conditions)
         {
             List<List<object>> dataToRerurn = new List<List<object>>();
             string selectedItems = "";
@@ -23,14 +22,14 @@ namespace TunaszUtils.DB
             {
                 selectedItems += selectItems[i] + ",";
             }
-            if (whereItems.Length > 0)
+            if (conditions.Length > 0)
             {
                 whereStringItems += "WHERE ";
             }
-            for (int i = 0; i < whereItems.Length; i += 3)
+            for (int i = 0; i < conditions.Length; i += 3)
             {
-                string where1 = whereItems[i + 2].GetType() == typeof(string) ? $"'{whereItems[i + 2]}'" : $"{whereItems[i + 2]}";
-                whereStringItems += $"{whereItems[i]}{whereItems[i + 1]}{where1},";
+                string where1 = conditions[i + 2].GetType() == typeof(string) ? $"'{conditions[i + 2]}'" : $"{conditions[i + 2]}";
+                whereStringItems += $"{conditions[i]}{conditions[i + 1]}{where1},";
             }
 
             selectedItems = selectedItems.TrimEnd(',');
@@ -84,7 +83,7 @@ namespace TunaszUtils.DB
         /// </summary>
         /// <param name="table"></param>
         /// <param name="setValues">First is the name, second is value</param>
-        /// <param name="conditions">First is name, second is value</param>
+        /// <param name="conditions">1st Name 2nd condition 3rd values</param>
         public static bool UpdateTable(string db,string table, object[] setValues, object[] conditions)
         {
 
@@ -103,18 +102,15 @@ namespace TunaszUtils.DB
                 }
 
             }
-            for (int i = 0; i < conditions.Length; i++)
-            {
-                if (i % 2 == 0)
-                {
-                    conditionsString += $"{conditions[i]}=";
-                }
-                else
-                {
-                    if (conditions[i].GetType() == typeof(string)) conditionsString += $"'{conditions[i]}',";
-                    else conditionsString += $"{conditions[i]},";
-                }
 
+            if (conditions.Length > 0)
+            {
+                conditionsString += "WHERE ";
+            }
+            for (int i = 0; i < conditions.Length; i += 3)
+            {
+                string where1 = conditions[i + 2].GetType() == typeof(string) ? $"'{conditions[i + 2]}'" : $"{conditions[i + 2]}";
+                conditionsString += $"{conditions[i]}{conditions[i + 1]}{where1},";
             }
             setValuesString = setValuesString.TrimEnd(',');
             conditionsString = conditionsString.TrimEnd(',');
