@@ -11,13 +11,15 @@ namespace TunaszUtils.DB
         /// </summary>
         /// <param name="table"></param>
         /// <param name="selectItems"></param>
-        /// <param name="conditions">1st Name 2nd condition 3rd values</param>
+        /// <param name="conditions">1st Name 2nd condition 3rd values 4th connection</param>
         /// <returns></returns>
         public static List<List<object>> SelectFromTable(string db, string table, object[] selectItems, object[] conditions)
         {
             List<List<object>> dataToRerurn = new List<List<object>>();
             string selectedItems = "";
             string whereStringItems = "";
+            Console.WriteLine(conditions.Length);
+
             for (int i = 0; i < selectItems.Length; i++)
             {
                 selectedItems += selectItems[i] + ",";
@@ -26,10 +28,11 @@ namespace TunaszUtils.DB
             {
                 whereStringItems += "WHERE ";
             }
-            for (int i = 0; i < conditions.Length; i += 3)
+            for (int i = 0; i < conditions.Length; i += 4)
             {
                 string where1 = conditions[i + 2].GetType() == typeof(string) ? $"'{conditions[i + 2]}'" : $"{conditions[i + 2]}";
-                whereStringItems += $"{conditions[i]}{conditions[i + 1]}{where1},";
+                string connection = i + 3 < conditions.Length ? $"{conditions[i + 3]}" : "";
+                whereStringItems += $"{conditions[i]}{conditions[i + 1]}{where1} {connection} ";
             }
 
             selectedItems = selectedItems.TrimEnd(',');
@@ -83,7 +86,7 @@ namespace TunaszUtils.DB
         /// </summary>
         /// <param name="table"></param>
         /// <param name="setValues">First is the name, second is value</param>
-        /// <param name="conditions">1st Name 2nd condition 3rd values</param>
+        /// <param name="conditions">1st Name 2nd condition 3rd values 4th connection</param>
         public static bool UpdateTable(string db,string table, object[] setValues, object[] conditions)
         {
 
@@ -107,14 +110,14 @@ namespace TunaszUtils.DB
             {
                 conditionsString += "WHERE ";
             }
-            for (int i = 0; i < conditions.Length; i += 3)
+            for (int i = 0; i < conditions.Length; i += 4)
             {
                 string where1 = conditions[i + 2].GetType() == typeof(string) ? $"'{conditions[i + 2]}'" : $"{conditions[i + 2]}";
-                conditionsString += $"{conditions[i]}{conditions[i + 1]}{where1},";
+                string connection = i + 3 < conditions.Length ? $"{conditions[i+3]}":"";
+                conditionsString += $"{conditions[i]}{conditions[i + 1]}{where1} {connection} ";
             }
             setValuesString = setValuesString.TrimEnd(',');
-            conditionsString = conditionsString.TrimEnd(',');
-            return RunDataBaseCommand(db,$"Update {table} SET {setValuesString} WHERE {conditionsString}");
+            return RunDataBaseCommand(db,$"Update {table} SET {setValuesString} {conditionsString}");
 
         }
 
