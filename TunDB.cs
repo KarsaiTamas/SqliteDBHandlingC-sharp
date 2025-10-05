@@ -36,7 +36,6 @@ namespace TunaszUtils.DB
             }
 
             selectedItems = selectedItems.TrimEnd(',');
-            whereStringItems = whereStringItems.TrimEnd(',');
             using (var con = new SQLiteConnection(db))
             {
                 con.Open();
